@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  db:
+    image: mysql
+    environment:
+       MYSQL_ROOT_PASSWORD: 123456
+       MYSQL_DATABASE: dudemo-db
+       MYSQL_USER: dudemo-user
+       MYSQL_PASSWORD: 123456
+
+  server:
+    depends_on:
+       - db
+    build:
+      context: ../../code/server
+    environment:
+      DUDEMO_SERVER_MYSQL_HOST: db
+      DUDEMO_SERVER_MYSQL_USER: dudemo-user
+      DUDEMO_SERVER_MYSQL_PASS: 123456
+      DUDEMO_SERVER_MYSQL_DB: dudemo-db
+      DUDEMO_SERVER_PORT: 9090
+  
+  nginx:
+    depends_on:
+       - server
+    build:
+      context: ../../code/nginx
+    ports:
+      - 4040:4040
+    environment:
+      DUDEMO_SERVER_PORT: 9090
+      NGINX_PORT: 4040
+      DUDEMO_SERVER_HOST: server
+  
+  monitor:
+    build:
+      context: ../../code/monitor
+    network_mode: host

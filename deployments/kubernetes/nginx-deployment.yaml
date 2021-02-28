@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: dudemo-nginx
+  name: dudemo-nginx
+spec:
+  type: LoadBalancer
+  ports:
+  - name: "4040"
+    port: 4040
+    targetPort: 4040
+  selector:
+    name: dudemo-nginx
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: dudemo-nginx
+  name: dudemo-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: dudemo-nginx
+  template:
+    metadata:
+      labels:
+        name: dudemo-nginx
+    spec:
+      restartPolicy: Always
+      containers:
+      - image: dudemo-nginx
+        imagePullPolicy: IfNotPresent
+        name: dudemo-nginx
+        env:
+        - name: DUDEMO_SERVER_HOST
+          value: dudemo-server
+        - name: NGINX_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: dudemo-config
+              key: NGINX_PORT
+        - name: DUDEMO_SERVER_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: dudemo-config
+              key: DUDEMO_SERVER_PORT

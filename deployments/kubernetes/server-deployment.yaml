@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dudemo-server
+spec:
+  ports:
+    - port: 9090
+  selector:
+    name: dudemo-server
+  clusterIP: None
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: dudemo-server
+  name: dudemo-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: dudemo-server
+  template:
+    metadata:
+      labels:
+        name: dudemo-server
+    spec:
+      restartPolicy: Always
+      containers:
+      - image: dudemo-server
+        imagePullPolicy: IfNotPresent
+        name: dudemo-server
+        env:
+        - name: DUDEMO_SERVER_MYSQL_HOST
+          value: dudemo-mysql
+        - name: DUDEMO_SERVER_MYSQL_PASS
+          valueFrom:
+            secretKeyRef:
+              name: dudemo-mysql-pass
+              key: password
+        - name: DUDEMO_SERVER_MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              name: dudemo-config
+              key: DB_USER
+        - name: DUDEMO_SERVER_MYSQL_DB
+          valueFrom:
+            configMapKeyRef:
+              name: dudemo-config
+              key: DB_NAME
+        - name: DUDEMO_SERVER_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: dudemo-config
+              key: DUDEMO_SERVER_PORT

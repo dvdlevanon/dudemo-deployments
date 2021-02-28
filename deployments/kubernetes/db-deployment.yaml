@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dudemo-mysql
+spec:
+  ports:
+    - port: 3306
+  selector:
+    name: dudemo-db
+  clusterIP: None
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: dudemo-db
+  name: dudemo-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: dudemo-db
+  template:
+    metadata:
+      labels:
+        name: dudemo-db
+    spec:
+      restartPolicy: Always
+      containers:
+      - image: mysql
+        name: dudemo-db
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dudemo-mysql-pass
+              key: password
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dudemo-mysql-pass
+              key: password
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              name: dudemo-config
+              key: DB_USER
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: dudemo-config
+              key: DB_NAME

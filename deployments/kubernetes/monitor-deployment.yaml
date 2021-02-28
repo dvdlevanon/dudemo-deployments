@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    name: dudemo-monitor
+  name: dudemo-monitor
+spec:
+  selector:
+    matchLabels:
+      name: dudemo-monitor
+  template:
+    metadata:
+      labels:
+        name: dudemo-monitor
+    spec:
+      hostNetwork: true
+      restartPolicy: Always
+      containers:
+      - image: dudemo-monitor
+        imagePullPolicy: IfNotPresent
+        name: dudemo-monitor
+        securityContext:
+          privileged: true
