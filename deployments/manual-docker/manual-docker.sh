@@ -6,6 +6,7 @@ declare dudemo_mysql_user=dudemo-user
 declare dudemo_mysql_pass=123456
 declare dudemo_server_port=9090
 declare dudemo_nginx_port=4040
+declare dudemo_nginx_ssl_port=4041
 
 pushd ../.. || exit 1
 
@@ -44,8 +45,10 @@ docker run -d --name "dudemo-manual-server" \
 
 docker run -d \
 	-p "$dudemo_nginx_port:$dudemo_nginx_port" \
+	-p "$dudemo_nginx_ssl_port:$dudemo_nginx_ssl_port" \
 	-e "DUDEMO_SERVER_PORT=$dudemo_server_port" \
 	-e "NGINX_PORT=$dudemo_nginx_port" \
+	-e "NGINX_SSL_PORT=$dudemo_nginx_ssl_port" \
 	-e "DUDEMO_SERVER_HOST=dudemo-manual-server" \
 	--network="$docker_network_name" \
 	-t dudemo-manual-nginx || exit 1

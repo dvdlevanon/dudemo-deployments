@@ -28,9 +28,11 @@ services:
       context: ../../code/nginx
     ports:
       - 4040:4040
+      - 4041:4041
     environment:
       DUDEMO_SERVER_PORT: 9090
       NGINX_PORT: 4040
+      NGINX_SSL_PORT: 4041
       DUDEMO_SERVER_HOST: server
   
   monitor:

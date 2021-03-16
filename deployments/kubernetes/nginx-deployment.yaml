@@ -10,6 +10,9 @@ spec:
   - name: "4040"
     port: 4040
     targetPort: 4040
+  - name: "4041"
+    port: 4041
+    targetPort: 4041
   selector:
     name: dudemo-nginx
 
@@ -44,6 +47,11 @@ spec:
             configMapKeyRef:
               name: dudemo-config
               key: NGINX_PORT
+        - name: NGINX_SSL_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: dudemo-config
+              key: NGINX_SSL_PORT
         - name: DUDEMO_SERVER_PORT
           valueFrom:
             configMapKeyRef:
