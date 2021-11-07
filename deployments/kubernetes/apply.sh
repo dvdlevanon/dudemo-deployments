@@ -9,6 +9,6 @@ fi
 kubectl apply -f db-deployment.yaml || exit 1
 kubectl apply -f server-deployment.yaml || exit 1
 kubectl apply -f nginx-deployment.yaml || exit 1
-kubectl apply -f monitor-deployment.yaml
+kubectl apply -f monitor-deployment.yaml || exit 1
 
 minikube service --url dudemo-nginx
