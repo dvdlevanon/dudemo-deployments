@@ -1,35 +1,43 @@
 #!/bin/bash
 
+source common.sh
+
 if ! minikube addons list | grep pod-security-policy | grep enabled > /dev/null; then
 	echo "The addon pod-security-policy should be enabled in minikube, please start it with the following command"
 	echo "  minikube start --extra-config=apiserver.enable-admission-plugins=PodSecurityPolicy --addons=pod-security-policy"
 	exit 1
 fi
 
-mkdir -p users/dudemo-user || exit 1
+mkdir -p users/$DUDEMO_KUBE_USER || exit 1
 
-if ! kubectl get csr dudemo-user >/dev/null 2>&1; then
-	openssl genrsa -out "users/dudemo-user/dudemo-user.key" 2048 || exit 1
-	openssl req -new -key "users/dudemo-user/dudemo-user.key" -out "users/dudemo-user/dudemo-user.csr" -subj "/CN=dudemo-user/O=dudemo-user" || exit 1
+if ! kubectl get csr $DUDEMO_KUBE_USER >/dev/null 2>&1; then
+	echo "Creating kubernetes user $DUDEMO_KUBE_USER"
+	
+	openssl genrsa -out "users/$DUDEMO_KUBE_USER/user.key" 2048 || exit 1
+	openssl req -new -key "users/$DUDEMO_KUBE_USER/user.key" -out "users/$DUDEMO_KUBE_USER/user.csr" -subj "/CN=$DUDEMO_KUBE_USER/O=$DUDEMO_KUBE_USER" || exit 1
 
-	export CSR_BASE64=$(cat "users/dudemo-user/dudemo-user.csr" | base64 | tr -d "\n")
-	export CSR_USERNAME=dudemo-user
-	envsubst < csr-template.yaml > users/dudemo-user/csr.yaml || exit 1
-	kubectl apply -f users/dudemo-user/csr.yaml || exit 1
+	export CSR_BASE64=$(cat "users/$DUDEMO_KUBE_USER/user.csr" | base64 | tr -d "\n")
+	envsubst < csr-template.yaml | kubectl apply -f - || exit 1
 
-	kubectl certificate approve dudemo-user || exit 1
-	kubectl get csr dudemo-user -o jsonpath='{.status.certificate}'| base64 -d > "users/dudemo-user/dudemo-user.crt" || exit 1
+	kubectl certificate approve $DUDEMO_KUBE_USER || exit 1
+	kubectl get csr $DUDEMO_KUBE_USER -o jsonpath='{.status.certificate}'| base64 -d > "users/$DUDEMO_KUBE_USER/user.crt" || exit 1
+else
+	echo "User $DUDEMO_KUBE_USER already exists"
 fi
 
-export MINIKUBE_CMD="minikube -n dudemo-namespace"
-export KUBECTL_CMD="kubectl --cluster minikube --client-certificate $(pwd)/users/dudemo-user/dudemo-user.crt --client-key $(pwd)/users/dudemo-user/dudemo-user.key -n dudemo-namespace"
+export MINIKUBE_CMD="minikube -n $DUDEMO_KUBE_NAMESPACE"
+export KUBECTL_CMD="kubectl --cluster minikube --client-certificate $(pwd)/users/$DUDEMO_KUBE_USER/user.crt --client-key $(pwd)/users/$DUDEMO_KUBE_USER/user.key -n $DUDEMO_KUBE_NAMESPACE"
 
-kubectl apply -f namespace.yaml || exit 1
-kubectl -n dudemo-namespace apply -f user-role.yaml || exit 1
-kubectl -n dudemo-namespace apply -f user-role-binding.yaml || exit 1
-kubectl -n dudemo-namespace apply -f psp.yaml || exit 1
-kubectl -n dudemo-namespace apply -f psp-role.yaml || exit 1
-kubectl -n dudemo-namespace apply -f psp-role-binding.yaml || exit 1
+echo "Preparing namespace and roles $DUDEMO_KUBE_NAMESPACE"
+
+envsubst < namespace-template.yaml | kubectl apply -f - || exit 1
+envsubst < user-role-binding-template.yaml | kubectl -n $DUDEMO_KUBE_NAMESPACE apply -f - || exit 1
+envsubst < psp-role-binding-template.yaml | kubectl -n $DUDEMO_KUBE_NAMESPACE apply -f - || exit 1
+kubectl -n $DUDEMO_KUBE_NAMESPACE apply -f user-role.yaml || exit 1
+kubectl -n $DUDEMO_KUBE_NAMESPACE apply -f psp.yaml || exit 1
+kubectl -n $DUDEMO_KUBE_NAMESPACE apply -f psp-role.yaml || exit 1
+
+echo "Deploying dudemo application"
 
 pushd ../kubernetes || exit
 ./apply.sh || exit 1

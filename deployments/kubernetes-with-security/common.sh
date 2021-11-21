@@ -1,0 +1,2 @@
+export DUDEMO_KUBE_USER=dudemo-kube-user
+export DUDEMO_KUBE_NAMESPACE=dudemo-namespace

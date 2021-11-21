@@ -4,7 +4,7 @@ metadata:
   name: dudemo-role-binding
 subjects:
 - kind: User
-  name: dudemo-user
+  name: $DUDEMO_KUBE_USER
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
