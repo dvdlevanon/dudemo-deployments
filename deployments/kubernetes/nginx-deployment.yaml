@@ -57,3 +57,5 @@ spec:
             configMapKeyRef:
               name: dudemo-config
               key: DUDEMO_SERVER_PORT
+      terminationGracePeriodSeconds: 1
+

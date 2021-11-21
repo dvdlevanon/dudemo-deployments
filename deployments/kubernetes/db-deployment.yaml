@@ -53,3 +53,4 @@ spec:
             configMapKeyRef:
               name: dudemo-config
               key: DB_NAME
+      terminationGracePeriodSeconds: 1

@@ -24,3 +24,5 @@ spec:
             drop:
               - all
             add: ["NET_RAW"]
+      terminationGracePeriodSeconds: 1
+
