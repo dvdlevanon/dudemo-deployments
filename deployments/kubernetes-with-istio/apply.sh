@@ -13,6 +13,5 @@ kubectl apply -f istio-virtual-service.yaml || exit 1
 export INGRESS_HOST=$(minikube ip)
 export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
 export INGRESS_URL=http://$INGRESS_HOST:$INGRESS_PORT
-# minikube tunnel
 
 echo $INGRESS_URL

@@ -1,14 +1,17 @@
 #!/bin/bash
 
-kubectl apply -f secret.yaml || exit 1
+[ -z "$KUBECTL_CMD" ] && KUBECTL_CMD=kubectl
+[ -z "$MINIKUBE_CMD" ] && MINIKUBE_CMD=minikube
 
-if ! kubectl get configmaps | grep dudemo-config; then
-	kubectl create configmap dudemo-config --from-env-file=dudemo-config.properties || exit 1
+$KUBECTL_CMD apply -f secret.yaml || exit 1
+
+if ! $KUBECTL_CMD get configmaps dudemo-config >/dev/null 2>&1; then
+	$KUBECTL_CMD create configmap dudemo-config --from-env-file=dudemo-config.properties || exit 1
 fi
 
-kubectl apply -f db-deployment.yaml || exit 1
-kubectl apply -f server-deployment.yaml || exit 1
-kubectl apply -f nginx-deployment.yaml || exit 1
-kubectl apply -f monitor-deployment.yaml || exit 1
+$KUBECTL_CMD apply -f db-deployment.yaml || exit 1
+$KUBECTL_CMD apply -f server-deployment.yaml || exit 1
+$KUBECTL_CMD apply -f nginx-deployment.yaml || exit 1
+$KUBECTL_CMD apply -f monitor-deployment.yaml || exit 1
 
-minikube service --url dudemo-nginx
+$MINIKUBE_CMD service --url dudemo-nginx

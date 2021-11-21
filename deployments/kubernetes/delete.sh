@@ -1,8 +1,10 @@
 #!/bin/bash
 
-kubectl delete -f monitor-deployment.yaml
-kubectl delete -f nginx-deployment.yaml
-kubectl delete -f server-deployment.yaml
-kubectl delete -f db-deployment.yaml
-kubectl delete configmap dudemo-config
-kubectl delete -f secret.yaml
+[ -z "$KUBECTL_CMD" ] && KUBECTL_CMD=kubectl
+
+$KUBECTL_CMD delete -f monitor-deployment.yaml
+$KUBECTL_CMD delete -f nginx-deployment.yaml
+$KUBECTL_CMD delete -f server-deployment.yaml
+$KUBECTL_CMD delete -f db-deployment.yaml
+$KUBECTL_CMD delete configmap dudemo-config
+$KUBECTL_CMD delete -f secret.yaml
