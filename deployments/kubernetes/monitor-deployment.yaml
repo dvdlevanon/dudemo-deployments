@@ -20,4 +20,7 @@ spec:
         imagePullPolicy: IfNotPresent
         name: dudemo-monitor
         securityContext:
-          privileged: true
+          capabilities:
+            drop:
+              - all
+            add: ["NET_RAW"]
