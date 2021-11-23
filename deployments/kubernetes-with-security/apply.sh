@@ -43,4 +43,13 @@ pushd ../kubernetes || exit
 ./apply.sh || exit 1
 popd || exit 1
 
+kubectl config set-credentials $DUDEMO_KUBE_USER \
+	--client-key $(pwd)/users/$DUDEMO_KUBE_USER/user.key \
+	--client-certificate $(pwd)/users/$DUDEMO_KUBE_USER/user.crt
+
+kubectl config set-context $DUDEMO_KUBE_USER \
+	--cluster=minikube \
+	--namespace=$DUDEMO_KUBE_NAMESPACE \
+	--user=$DUDEMO_KUBE_USER
+
 echo $KUBECTL_CMD
