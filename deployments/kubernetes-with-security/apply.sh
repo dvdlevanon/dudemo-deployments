@@ -31,11 +31,11 @@ export KUBECTL_CMD="kubectl --cluster minikube --client-certificate $(pwd)/users
 echo "Preparing namespace and roles $DUDEMO_KUBE_NAMESPACE"
 
 envsubst < namespace-template.yaml | kubectl apply -f - || exit 1
+envsubst < user-role.yaml | kubectl -n $DUDEMO_KUBE_NAMESPACE apply -f - || exit 1
 envsubst < user-role-binding-template.yaml | kubectl -n $DUDEMO_KUBE_NAMESPACE apply -f - || exit 1
+envsubst < psp.yaml | kubectl -n $DUDEMO_KUBE_NAMESPACE apply -f - || exit 1
+envsubst < psp-role.yaml | kubectl -n $DUDEMO_KUBE_NAMESPACE apply -f - || exit 1
 envsubst < psp-role-binding-template.yaml | kubectl -n $DUDEMO_KUBE_NAMESPACE apply -f - || exit 1
-kubectl -n $DUDEMO_KUBE_NAMESPACE apply -f user-role.yaml || exit 1
-kubectl -n $DUDEMO_KUBE_NAMESPACE apply -f psp.yaml || exit 1
-kubectl -n $DUDEMO_KUBE_NAMESPACE apply -f psp-role.yaml || exit 1
 
 echo "Deploying dudemo application"
 

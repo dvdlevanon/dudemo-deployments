@@ -1,10 +1,10 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
-  name: dudemo-psp-role
+  name: psp-role
 rules:
 - apiGroups: ['policy']
   resources: ['podsecuritypolicies']
   verbs:     ['use']
   resourceNames:
-  - dudemo-psp
+  - $DUDEMO_KUBE_NAMESPACE-psp

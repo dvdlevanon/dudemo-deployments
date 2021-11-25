@@ -10,9 +10,9 @@ pushd ../kubernetes || exit 1
 ./delete.sh
 popd || exit 1
 
-kubectl -n $DUDEMO_KUBE_NAMESPACE delete -f user-role.yaml
-kubectl -n $DUDEMO_KUBE_NAMESPACE delete -f psp.yaml
-kubectl -n $DUDEMO_KUBE_NAMESPACE delete -f psp-role.yaml
+envsubst < user-role.yaml | kubectl -n $DUDEMO_KUBE_NAMESPACE delete -f -
+envsubst < psp.yaml | kubectl -n $DUDEMO_KUBE_NAMESPACE delete -f -
+envsubst < psp-role.yaml | kubectl -n $DUDEMO_KUBE_NAMESPACE delete -f -
 envsubst < user-role-binding-template.yaml | kubectl -n $DUDEMO_KUBE_NAMESPACE delete -f -
 envsubst < psp-role-binding-template.yaml | kubectl -n $DUDEMO_KUBE_NAMESPACE delete -f -
 envsubst < namespace-template.yaml | kubectl delete -f -

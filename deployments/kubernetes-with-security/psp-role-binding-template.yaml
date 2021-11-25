@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: dudemo-psp-role-binding
+  name: psp-role-binding
 subjects:
-- kind: User
-  name: $DUDEMO_KUBE_USER
+- kind: Group
+  name: system:serviceaccounts:$DUDEMO_KUBE_NAMESPACE
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
-  name: dudemo-psp-role
+  name: psp-role
   apiGroup: rbac.authorization.k8s.io
