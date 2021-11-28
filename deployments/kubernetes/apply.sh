@@ -1,7 +1,7 @@
 #!/bin/bash
 
-[ -z "$KUBECTL_CMD" ] && KUBECTL_CMD=kubectl
-[ -z "$MINIKUBE_CMD" ] && MINIKUBE_CMD=minikube
+[ -z "$KUBECTL_CMD" ] && export KUBECTL_CMD=kubectl
+[ -z "$MINIKUBE_CMD" ] && export MINIKUBE_CMD=minikube
 
 $KUBECTL_CMD apply -f secret.yaml || exit 1
 

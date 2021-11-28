@@ -13,6 +13,6 @@ spec:
         prefix: /
     route:
     - destination:
-        host: dudemo-nginx.$DUDEMO_KUBE_NAMESPACE.svc.cluster.local
+        host: dudemo-nginx.dudemo-namespace.svc.cluster.local
         port:
           number: 4040

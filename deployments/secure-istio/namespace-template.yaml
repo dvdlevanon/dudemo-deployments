@@ -1,0 +1,6 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: $DUDEMO_KUBE_NAMESPACE
+  labels:
+    name: $DUDEMO_KUBE_NAMESPACE
