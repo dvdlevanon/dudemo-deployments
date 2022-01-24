@@ -1,6 +1,8 @@
 #!/bin/bash
 
-eval $(minikube -p minikube docker-env)
+if [ "$1" != "no-minikube" ]; then
+	eval $(minikube -p minikube docker-env)
+fi
 
 pushd ../.. || exit 1
 
